@@ -1,37 +1,52 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
-SECRET_NUMBER = rand(100)
+@@number = rand(100)
+@@guesses_left = 5
 
 get '/' do
-	if params["guess"]
-		message, color = check_guess(params["guess"].to_i)		
-	else
-		message = ""
-		color = ""
-	end
+	
+	message = ""
+	color = ""
 	cheat = ""
-	cheat = params["cheat"] if params["cheat"]
+	@@guesses_left -= 1
 
-	erb :index, :locals => {:secret_number => SECRET_NUMBER, :message => message, :color => color, :cheat => cheat}
+	if @@guesses_left == 0
+		message = "Game over, a new number has been generated"
+		color = "lightgray"
+		new_game
+	else
+		message, color = check_guess(params["guess"].to_i) 	if params["guess"]
+		cheat = params["cheat"] 														if params["cheat"]
+	end
+
+	erb :index, :locals => {:secret_number => @@number, :message => message, :color => color, :cheat => cheat, :guesses_left => @@guesses_left}
 end
 
 def check_guess(guess)
-	if guess - SECRET_NUMBER > 5
+	if guess - @@number > 5
 		message = "Way too high!"
 		color = "red"
-	elsif guess > SECRET_NUMBER
+	elsif guess > @@number
 		message = "Too high!"
 		color = "orange"
-	elsif guess - SECRET_NUMBER < -5
+	elsif guess - @@number < -5
 		message = "Way too low!"
 		color = "blue"
-	elsif guess < SECRET_NUMBER
+	elsif guess < @@number
 		message = "Too low!"
 		color = "lightblue"
-	elsif guess == SECRET_NUMBER
-		message = "You got it right!"
+	elsif guess == @@number
+		message = "You got it right! A new number has been generated"
 		color = "green"
+		new_game
 	end
 	return message, color
+end
+
+def new_game
+
+	@@guesses_left = 5
+	@@number = rand(100)
+
 end
