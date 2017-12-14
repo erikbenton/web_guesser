@@ -10,8 +10,10 @@ get '/' do
 		message = ""
 		color = ""
 	end
+	cheat = ""
+	cheat = params["cheat"] if params["cheat"]
 
-	erb :index, :locals => {:secret_number => SECRET_NUMBER, :message => message, :color => color}
+	erb :index, :locals => {:secret_number => SECRET_NUMBER, :message => message, :color => color, :cheat => cheat}
 end
 
 def check_guess(guess)

@@ -12,9 +12,11 @@
 	<p>
 		<%=message%>
 	</p>
+	<% if cheat == "true" %>
 	<p>
 		The SECRET NUMBER is <%=secret_number%>
 	</p>
+	<% end %>
 	<form>
 		<input type="text" name="guess" />
 		<input type="submit" value="Guess!" />
